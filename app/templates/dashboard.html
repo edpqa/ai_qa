@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Regression Testing Plan</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap");
+
+      :root {
+        --ink: #101623;
+        --muted: #4c566b;
+        --panel: #ffffff;
+        --panel-2: #f4f1ed;
+        --accent: #e2573e;
+        --accent-2: #e9b44c;
+        --accent-3: #4b7f52;
+        --line: #e1d8ce;
+        --shadow: 0 20px 60px rgba(16, 22, 35, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top, #f7ede2, #f1e7dd 35%, #efe3d7 70%, #e7d7c8 100%);
+        min-height: 100vh;
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 48px 20px 72px;
+      }
+
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 28px;
+      }
+
+      .title {
+        max-width: 520px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
+        letter-spacing: -0.02em;
+      }
+
+      .title p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-size: 0.95rem;
+        box-shadow: var(--shadow);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .card h3 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .card .value {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .card .trend {
+        margin-top: 12px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+      }
+
+      .panel h2 {
+        margin: 0 0 16px;
+        font-size: 1.4rem;
+      }
+
+      .plan-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.98rem;
+      }
+
+      .plan-table th,
+      .plan-table td {
+        padding: 10px 8px;
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .pill.green {
+        background: rgba(75, 127, 82, 0.15);
+        color: #2f6a38;
+      }
+
+      .pill.orange {
+        background: rgba(226, 87, 62, 0.15);
+        color: #b23b27;
+      }
+
+      .pill.gold {
+        background: rgba(233, 180, 76, 0.2);
+        color: #9c6a0b;
+      }
+
+      .progress {
+        height: 10px;
+        background: #f0e6db;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .progress span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      }
+
+      .checklist li {
+        list-style: none;
+        margin: 10px 0;
+        padding-left: 26px;
+        position: relative;
+        color: var(--muted);
+      }
+
+      .checklist li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 4px;
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        border: 2px solid var(--accent-3);
+        background: #f7f0e7;
+      }
+
+      .checklist li.done {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .checklist li.done::before {
+        background: var(--accent-3);
+        box-shadow: inset 0 0 0 3px #f7f0e7;
+      }
+
+      .schedule {
+        display: grid;
+        gap: 12px;
+      }
+
+      .schedule div {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 14px;
+        background: var(--panel-2);
+      }
+
+      .schedule h4 {
+        margin: 0 0 4px;
+        font-size: 1rem;
+      }
+
+      .footnote {
+        margin-top: 16px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .split {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="title">
+          <h1>Regression Testing Plan</h1>
+          <p>Snapshot of upcoming coverage, risk, and readiness for the next release.</p>
+        </div>
+        <div class="tag">
+          Release 2.7.1
+          <span class="pill gold">Freeze in 3 days</span>
+        </div>
+      </header>
+
+      <div style="margin-bottom: 18px;">
+        <a
+          href="/regression-impact"
+          style="color: var(--accent); font-weight: 700; text-decoration: none;"
+        >
+          View regression impact detector →
+        </a>
+      </div>
+
+      <section class="grid">
+        <div class="card">
+          <h3>Coverage Target</h3>
+          <div class="value">92%</div>
+          <div class="trend">+6% vs last release</div>
+        </div>
+        <div class="card">
+          <h3>High-Risk Areas</h3>
+          <div class="value">5</div>
+          <div class="trend">Payments, Search, Auth</div>
+        </div>
+        <div class="card">
+          <h3>Automation Ready</h3>
+          <div class="value">41 / 55</div>
+          <div class="trend">14 manual cases remaining</div>
+        </div>
+        <div class="card">
+          <h3>Bug Carryover</h3>
+          <div class="value">8</div>
+          <div class="trend">3 must-fix before GA</div>
+        </div>
+      </section>
+
+      <section class="split">
+        <div class="panel">
+          <h2>Suite Progress</h2>
+          <table class="plan-table">
+            <thead>
+              <tr>
+                <th>Suite</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Progress</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Checkout & Payments</td>
+                <td>Maya</td>
+                <td><span class="pill orange">In flight</span></td>
+                <td>
+                  <div class="progress"><span style="width: 68%;"></span></div>
+                </td>
+              </tr>
+              <tr>
+                <td>Search & Recommendations</td>
+                <td>Jordan</td>
+                <td><span class="pill gold">Queued</span></td>
+                <td>
+                  <div class="progress"><span style="width: 42%;"></span></div>
+                </td>
+              </tr>
+              <tr>
+                <td>Auth & Sessions</td>
+                <td>Priya</td>
+                <td><span class="pill green">Signed off</span></td>
+                <td>
+                  <div class="progress"><span style="width: 100%;"></span></div>
+                </td>
+              </tr>
+              <tr>
+                <td>Core APIs</td>
+                <td>Lee</td>
+                <td><span class="pill orange">In flight</span></td>
+                <td>
+                  <div class="progress"><span style="width: 75%;"></span></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <h2>Readiness Checklist</h2>
+          <ul class="checklist">
+            <li class="done">Regression suite updated with new pricing rules</li>
+            <li class="done">Baseline data refresh in staging</li>
+            <li>Performance run queued for Saturday</li>
+            <li>Security patch verification pending</li>
+            <li>Release notes review with Support</li>
+          </ul>
+          <p class="footnote">Focus: lock data changes, confirm defect triage, finish load run.</p>
+        </div>
+      </section>
+
+      <section class="split">
+        <div class="panel">
+          <h2>Environment Matrix</h2>
+          <table class="plan-table">
+            <thead>
+              <tr>
+                <th>Environment</th>
+                <th>Build</th>
+                <th>Data</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Staging</td>
+                <td>2.7.1-rc3</td>
+                <td>Refreshed</td>
+                <td>Primary for automation</td>
+              </tr>
+              <tr>
+                <td>Perf</td>
+                <td>2.7.1-rc2</td>
+                <td>Synthetic</td>
+                <td>Load test window Sat 10am</td>
+              </tr>
+              <tr>
+                <td>UAT</td>
+                <td>2.7.1-rc1</td>
+                <td>Masked prod</td>
+                <td>Stakeholder sign-off</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <h2>Next 5 Days</h2>
+          <div class="schedule">
+            <div>
+              <h4>Today</h4>
+              <p>Finish payments edge-case run, verify refund flow.</p>
+            </div>
+            <div>
+              <h4>Day 2</h4>
+              <p>Run search regression and diff results.</p>
+            </div>
+            <div>
+              <h4>Day 3</h4>
+              <p>Perf load, capture latency baselines.</p>
+            </div>
+            <div>
+              <h4>Day 4</h4>
+              <p>Fix-forward verification for top 3 bugs.</p>
+            </div>
+            <div>
+              <h4>Day 5</h4>
+              <p>Sign-off sync and final defect sweep.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

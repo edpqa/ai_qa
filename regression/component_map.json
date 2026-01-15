@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "levels": ["low", "medium", "high"],
+  "default_level": "low",
+  "components": [
+    {
+      "name": "api",
+      "description": "Flask routes and server-side behavior",
+      "paths": ["app/*.py", "app/**/*.py"],
+      "exclude_paths": [],
+      "product_impact": true,
+      "regression_level": "high"
+    },
+    {
+      "name": "dashboard_ui",
+      "description": "Dashboard HTML templates",
+      "paths": ["app/templates/**"],
+      "exclude_paths": [],
+      "product_impact": true,
+      "regression_level": "medium"
+    },
+    {
+      "name": "tests",
+      "description": "Automated tests (usually no product impact by itself)",
+      "paths": ["tests/**"],
+      "exclude_paths": [],
+      "product_impact": false,
+      "regression_level": "low"
+    },
+    {
+      "name": "docs",
+      "description": "Documentation and repo metadata",
+      "paths": ["README.md", ".gitignore"],
+      "exclude_paths": [],
+      "product_impact": false,
+      "regression_level": "low"
+    }
+  ]
+}

@@ -40,3 +40,16 @@ def test_create_item_success(client):
     items = r2.get_json()["items"]
     assert len(items) == 1
     assert items[0]["name"] == "first"
+
+
+def test_regression_impact_page_renders(client):
+    r = client.get("/regression-impact")
+    assert r.status_code == 200
+    assert b"Regression Impact" in r.data
+
+
+def test_regression_impact_post_returns_level(client):
+    r = client.post("/regression-impact", data={"changed_files": "app/app.py\n"})
+    assert r.status_code == 200
+    assert b"Recommended regression level" in r.data
+    assert b"high" in r.data

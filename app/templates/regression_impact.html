@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Regression Impact</title>
+    <style>
+      :root {
+        --ink: #101623;
+        --muted: #4c566b;
+        --panel: #ffffff;
+        --line: #e1d8ce;
+        --shadow: 0 20px 60px rgba(16, 22, 35, 0.12);
+        --accent: #e2573e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+        color: var(--ink);
+        background: #f7ede2;
+        min-height: 100vh;
+      }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 40px 18px 60px;
+      }
+
+      header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.9rem;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 140px;
+        resize: vertical;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.95rem;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 12px;
+      }
+
+      button {
+        background: var(--accent);
+        color: white;
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .result {
+        margin-top: 18px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(226, 87, 62, 0.12);
+        border: 1px solid rgba(226, 87, 62, 0.25);
+        font-weight: 700;
+      }
+
+      ul {
+        margin: 10px 0 0;
+        padding-left: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Regression Impact</h1>
+        <div>
+          <a href="/dashboard">Dashboard</a>
+        </div>
+      </header>
+
+      <div class="panel">
+        <form method="post">
+          <label for="changed_files">Changed files (one per line)</label>
+          <textarea
+            id="changed_files"
+            name="changed_files"
+            placeholder="app/app.py&#10;app/templates/dashboard.html"
+          >{{ changed_files_text }}</textarea>
+          <div class="row">
+            <button type="submit">Analyze</button>
+            <div class="hint">Tip: paste output from <code>git diff --name-only</code></div>
+          </div>
+        </form>
+
+        {% if result %}
+          <div class="result">
+            <div>
+              Recommended regression level:
+              <span class="badge">{{ result.recommended_regression_level }}</span>
+            </div>
+
+            {% if result.impacted_components %}
+              <h3>Impacted components</h3>
+              <ul>
+                {% for c in result.impacted_components %}
+                  <li>
+                    <strong>{{ c.name }}</strong> (level={{ c.regression_level }}, product={{ c.product_impact }})
+                    <div class="hint">{{ c.files | join(", ") }}</div>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <div class="hint" style="margin-top: 10px;">No components matched those files.</div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
+

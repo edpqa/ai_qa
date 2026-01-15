@@ -1,4 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
+
+import sys
+from pathlib import Path
 
 app = Flask(__name__)
 
@@ -7,9 +10,51 @@ ITEMS = []
 NEXT_ID = 1
 
 
+def _ensure_repo_root_on_sys_path() -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    repo_root_str = str(repo_root)
+    if repo_root_str not in sys.path:
+        sys.path.insert(0, repo_root_str)
+
+
+def _changed_files_from_text(text: str) -> list[str]:
+    return [line.strip() for line in (text or "").splitlines() if line.strip()]
+
+
 @app.get("/")
 def home():
-    return "Hello, this is a simple QA app."
+    return (
+        "Hello, this is a simple QA app. "
+        "Visit /dashboard for the regression testing plan."
+    )
+
+
+@app.get("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route("/regression-impact", methods=["GET", "POST"])
+def regression_impact():
+    _ensure_repo_root_on_sys_path()
+    from tools.regression_impact import analyze_change_set
+
+    changed_files_text = ""
+    result = None
+
+    if request.method == "POST":
+        changed_files_text = request.form.get("changed_files", "")
+        changed_files = _changed_files_from_text(changed_files_text)
+        result = analyze_change_set(
+            rules_path="regression/component_map.json",
+            changed_files=changed_files,
+        )
+
+    return render_template(
+        "regression_impact.html",
+        changed_files_text=changed_files_text,
+        result=result,
+    )
 
 
 @app.get("/health")
